@@ -1,0 +1,40 @@
+{
+  "name": "jsonld-patch",
+  "version": "0.1.0-0",
+  "description": "JSON patch for JSON-LD",
+  "main": "lib",
+  "files": [
+    "dist/*.js",
+    "dist/*.js.map",
+    "lib/*.js",
+    "lib/**/*.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/digitalbazaar/jsonld-patch.git"
+  },
+  "author": {
+    "name": "Digital Bazaar, Inc.",
+    "email": "support@digitalbazaar.com",
+    "url": "http://digitalbazaar.com"
+  },
+  "bugs": {
+    "url": "https://github.com/digitalbazaar/jsonld-patch/issues"
+  },
+  "homepage": "https://github.com/digitalbazaar/jsonld-patch",
+  "dependencies": {
+    "jsonld": "^1.0.1"
+  },
+  "devDependencies": {
+    "webpack": "^4.1.1",
+    "webpack-cli": "^2.0.12"
+  },
+  "engines": {
+    "node": ">=8.9.0"
+  },
+  "browser": {},
+  "scripts": {
+    "prepublish": "npm run build",
+    "build": "webpack -p"
+  }
+}
