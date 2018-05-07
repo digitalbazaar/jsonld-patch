@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/digitalbazaar/jsonld-patch",
   "dependencies": {
+    "fast-json-patch": "^2.0.6",
     "jsonld": "^1.0.1"
   },
   "devDependencies": {
