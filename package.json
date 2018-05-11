@@ -1,6 +1,6 @@
 {
   "name": "jsonld-patch",
-  "version": "0.1.0",
+  "version": "0.1.1-0",
   "description": "JSON patch for JSON-LD",
   "main": "lib",
   "files": [
