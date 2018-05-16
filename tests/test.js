@@ -140,6 +140,27 @@ describe('basic applyPatch tests', function() {
           '@container': '@set',
           '@id': 'http://example.org/someSet'}},
       'someSet': {}};
+    // We expect this to have the right ordering based off of the canonized
+    // form of the document, which is:
+    //   _:c14n0 <http://example.org/anotherSet> "alice" .
+    //   _:c14n0 <http://example.org/anotherSet> "bob" .
+    //   _:c14n0 <http://example.org/anotherSet> "carol" .
+    //   _:c14n0 <http://example.org/content> "kaboom" .
+    //   _:c14n0 <http://example.org/id> "https://example.org/obj/blat" .
+    //   _:c14n1 <http://example.org/content> "bar" .
+    //   _:c14n1 <http://example.org/type> "Foo" .
+    //   _:c14n2 <http://example.org/content> "frizzle" .
+    //   _:c14n2 <http://example.org/id> "https://example.org/obj/fromp" .
+    //   _:c14n3 <http://example.org/someSet> "beepity" .
+    //   _:c14n3 <http://example.org/someSet> "boopity" .
+    //   _:c14n3 <http://example.org/someSet> "frip" .
+    //   _:c14n3 <http://example.org/someSet> "zylophone" .
+    //   _:c14n3 <http://example.org/someSet> _:c14n0 .
+    //   _:c14n3 <http://example.org/someSet> _:c14n1 .
+    //   _:c14n3 <http://example.org/someSet> _:c14n2 .
+    //   _:c14n3 <http://example.org/someSet> _:c14n4 .
+    //   _:c14n4 <http://example.org/content> "foo" .
+    //   _:c14n4 <http://example.org/type> "Bar" .
     const expected = {
       "@context": {
         "@vocab": "http://example.org/",
