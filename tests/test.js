@@ -11,7 +11,7 @@
 const assert = require('assert');
 const jldp = require('..');
 
-describe('applyPatch', function() {
+describe('basic applyPatch tests', function() {
   const exampleFrame = {
     '@context': {'@vocab': 'http://example.org/'},
     '@type': 'Library',
@@ -111,7 +111,76 @@ describe('applyPatch', function() {
           patchedDoc, expectedPatchedDocument);});
   });
 
-  // it('should return -1 when the value is not present', function() {
-  //   assert.equal([1,2,3].indexOf(4), -1);
-  // });
+  it('should have a consistent order with sets', function() {
+    const docWithSet = {
+      '@context': {
+        '@vocab': 'http://example.org/',
+        'someSet': {
+          '@container': '@set',
+          '@id': 'http://example.org/someSet'}},
+      'someSet': [
+        {'id': 'https://example.org/obj/fromp',
+         'content': 'frizzle'},
+        'frip',
+        'zylophone',
+        {'type': 'Foo',
+         'content': 'bar'},
+        {'type': 'Bar',
+         'content': 'foo'},
+        {'id': 'https://example.org/obj/blat',
+         'content': 'kaboom',
+         'anotherSet': [
+           'alice', 'carol', 'bob']},
+        'beepity',
+        'boopity']};
+    const frame = {
+      '@context': {
+        '@vocab': 'http://example.org/',
+        'someSet': {
+          '@container': '@set',
+          '@id': 'http://example.org/someSet'}},
+      'someSet': {}};
+    const expected = {
+      "@context": {
+        "@vocab": "http://example.org/",
+        "someSet": {
+          "@container": "@set",
+          "@id": "http://example.org/someSet"
+        }
+      },
+      "someSet": [
+        "beepity",
+        "boopity",
+        "frip",
+        "zylophone",
+        {
+          "id": "https://example.org/obj/blat",
+          "content": "kaboom",
+          "anotherSet": [
+            "alice",
+            "bob",
+            "carol"
+          ]
+        },
+        {
+          "type": "Foo",
+          "content": "bar"
+        },
+        {
+          "id": "https://example.org/obj/fromp",
+          "content": "frizzle"
+        },
+        {
+          "type": "Bar",
+          "content": "foo"
+        }
+      ]
+    };
+
+    jldp.applyPatch(
+      {document: docWithSet, frame: frame, patch: []},
+      (error, doc) => {
+        assert.equal(doc, expected);});
+  });
 });
+
