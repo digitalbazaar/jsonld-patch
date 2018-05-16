@@ -162,38 +162,38 @@ describe('basic applyPatch tests', function() {
     //   _:c14n4 <http://example.org/content> "foo" .
     //   _:c14n4 <http://example.org/type> "Bar" .
     const expected = {
-      "@context": {
-        "@vocab": "http://example.org/",
-        "someSet": {
-          "@container": "@set",
-          "@id": "http://example.org/someSet"
+      '@context': {
+        '@vocab': 'http://example.org/',
+        'someSet': {
+          '@container': '@set',
+          '@id': 'http://example.org/someSet'
         }
       },
-      "someSet": [
-        "beepity",
-        "boopity",
-        "frip",
-        "zylophone",
+      'someSet': [
+        'beepity',
+        'boopity',
+        'frip',
+        'zylophone',
         {
-          "id": "https://example.org/obj/blat",
-          "content": "kaboom",
-          "anotherSet": [
-            "alice",
-            "bob",
-            "carol"
+          'id': 'https://example.org/obj/blat',
+          'content': 'kaboom',
+          'anotherSet': [
+            'alice',
+            'bob',
+            'carol'
           ]
         },
         {
-          "type": "Foo",
-          "content": "bar"
+          'type': 'Foo',
+          'content': 'bar'
         },
         {
-          "id": "https://example.org/obj/fromp",
-          "content": "frizzle"
+          'id': 'https://example.org/obj/fromp',
+          'content': 'frizzle'
         },
         {
-          "type": "Bar",
-          "content": "foo"
+          'type': 'Bar',
+          'content': 'foo'
         }
       ]
     };
