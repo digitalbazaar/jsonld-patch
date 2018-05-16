@@ -25,7 +25,8 @@
   "dependencies": {
     "fast-json-patch": "^2.0.6",
     "jsonld": "^1.0.1",
-    "lodash": "^4.17.10"
+    "lodash": "^4.17.10",
+    "mocha": "^5.1.1"
   },
   "devDependencies": {
     "webpack": "^4.1.1",
