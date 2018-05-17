@@ -92,26 +92,30 @@ describe('basic applyPatch tests', function() {
     }
   };
 
-  it('should properly patch with just the patch, no frame', function () {
+  it('should properly patch with just the patch, no frame', function (done) {
     jldp.applyPatch(
       {document: framedObject,
-       patch: examplePatch},
-      function(error, patchedDoc) {
-        assert.equal(
-          patchedDoc, expectedPatchedDocument);});
+       patch: examplePatch}).then(
+         function(patchedDoc) {
+           assert.deepEqual(
+             patchedDoc, expectedPatchedDocument);
+           done();
+         }).catch(function(error) {done(error);});
   });
 
-  it('should properly patch with just the patch and frame', function () {
+  it('should properly patch with just the patch and frame', function (done) {
     jldp.applyPatch(
       {document: flatObject,
        patch: examplePatch,
-       frame: exampleFrame},
-      function(error, patchedDoc) {
-        assert.equal(
-          patchedDoc, expectedPatchedDocument);});
+       frame: exampleFrame}).then(
+      function(patchedDoc) {
+        assert.deepEqual(
+          patchedDoc, expectedPatchedDocument);
+        done();
+      }).catch(function(error) {done(error);});
   });
 
-  it('should have a consistent order with sets', function() {
+  it('should have a consistent order with sets', function(done) {
     const docWithSet = {
       '@context': {
         '@vocab': 'http://example.org/',
@@ -164,48 +168,49 @@ describe('basic applyPatch tests', function() {
     //   _:c14n4 <http://example.org/content> "foo" .
     //   _:c14n4 <http://example.org/type> "Bar" .
     const expected = {
-      '@context': {
-        '@vocab': 'http://example.org/',
-        'someSet': {
-          '@container': '@set',
-          '@id': 'http://example.org/someSet'
+      "someSet": [
+        "beepity",
+        "boopity",
+        "frip",
+        "zylophone",
+        {
+          "anotherSet": [
+            "alice",
+            "bob",
+            "carol"
+          ],
+          "content": "kaboom",
+          "id": "https://example.org/obj/blat"
+        },
+        {
+          "content": "bar",
+          "type": "Foo"
+        },
+        {
+          "content": "frizzle",
+          "id": "https://example.org/obj/fromp",
+          "email": "greatjob@example.org"
+        },
+        {
+          "content": "foo",
+          "type": "Bar"
         }
-      },
-      'someSet': [
-        'beepity',
-        'boopity',
-        'frip',
-        'zylophone',
-        {
-          'id': 'https://example.org/obj/blat',
-          'content': 'kaboom',
-          'anotherSet': [
-            'alice',
-            'bob',
-            'carol'
-          ]
-        },
-        {
-          'type': 'Foo',
-          'content': 'bar'
-        },
-        {
-          'id': 'https://example.org/obj/fromp',
-          'content': 'frizzle',
-          'email': 'greatjob@example.org',
-        },
-        {
-          'type': 'Bar',
-          'content': 'foo'
+      ],
+      "@context": {
+        "@vocab": "http://example.org/",
+        "someSet": {
+          "@container": "@set",
+          "@id": "http://example.org/someSet"
         }
-      ]
+      }
     };
 
-    result = jldp.applyPatch(
-      {document: docWithSet, frame: frame, patch: []},
-      (error, result) => {
-        assert.equal(result, expected);
-      });
+    jldp.applyPatch(
+      {document: docWithSet, frame, patch}).then(
+        function(result) {
+          assert.deepEqual(result, expected);
+          done();
+        }).catch(function(error) {done(error);});
   });
 });
 
