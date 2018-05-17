@@ -140,6 +140,8 @@ describe('basic applyPatch tests', function() {
           '@container': '@set',
           '@id': 'http://example.org/someSet'}},
       'someSet': {}};
+    const patch = [
+      {op: 'add', path: '/someSet/6/email', value: 'greatjob@example.org'}]
     // We expect this to have the right ordering based off of the canonized
     // form of the document, which is:
     //   _:c14n0 <http://example.org/anotherSet> "alice" .
@@ -189,7 +191,8 @@ describe('basic applyPatch tests', function() {
         },
         {
           'id': 'https://example.org/obj/fromp',
-          'content': 'frizzle'
+          'content': 'frizzle',
+          'email': 'greatjob@example.org',
         },
         {
           'type': 'Bar',
@@ -198,10 +201,11 @@ describe('basic applyPatch tests', function() {
       ]
     };
 
-    jldp.applyPatch(
+    result = jldp.applyPatch(
       {document: docWithSet, frame: frame, patch: []},
-      (error, doc) => {
-        assert.equal(doc, expected);});
+      (error, result) => {
+        assert.equal(result, expected);
+      });
   });
 });
 
