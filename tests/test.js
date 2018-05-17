@@ -11,7 +11,7 @@
 const assert = require('assert');
 const jldp = require('..');
 
-describe('basic applyPatch tests', function() {
+describe('applyPatch', function() {
   const exampleFrame = {
     '@context': {'@vocab': 'http://example.org/'},
     '@type': 'Library',
