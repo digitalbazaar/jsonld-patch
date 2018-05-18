@@ -10,88 +10,90 @@
 
 const assert = require('assert');
 const jldp = require('..');
+const deepEqual = require('deep-equal');
+const _ = require('lodash');
 
-describe('applyPatch', function() {
-  const exampleFrame = {
-    '@context': {'@vocab': 'http://example.org/'},
-    '@type': 'Library',
+const exampleFrame = {
+  '@context': {'@vocab': 'http://example.org/'},
+  '@type': 'Library',
+  'contains': {
+    '@type': 'Book',
     'contains': {
-      '@type': 'Book',
-      'contains': {
-        '@type': 'Chapter'
-      }
+      '@type': 'Chapter'
     }
-  };
+  }
+};
 
-  const flatObject = {
-    '@context': {
-      '@vocab': 'http://example.org/',
-      'contains': {'@type': '@id'}
-    },
-    '@graph': [{
-      '@id': 'http://example.org/library',
-      '@type': 'Library',
-      'contains': 'http://example.org/library/the-republic'
-    }, {
-      '@id': 'http://example.org/library/the-republic',
-      '@type': 'Book',
-      'creator': 'Plato',
-      'title': 'The Republic',
-      'contains': 'http://example.org/library/the-republic#introduction'
-    }, {
+const flatObject = {
+  '@context': {
+    '@vocab': 'http://example.org/',
+    'contains': {'@type': '@id'}
+  },
+  '@graph': [{
+    '@id': 'http://example.org/library',
+    '@type': 'Library',
+    'contains': 'http://example.org/library/the-republic'
+  }, {
+    '@id': 'http://example.org/library/the-republic',
+    '@type': 'Book',
+    'creator': 'Plato',
+    'title': 'The Republic',
+    'contains': 'http://example.org/library/the-republic#introduction'
+  }, {
+    '@id': 'http://example.org/library/the-republic#introduction',
+    '@type': 'Chapter',
+    'description': 'An introductory chapter on The Republic.',
+    'title': 'The Introduction'
+  }]
+};
+
+const framedObject = {
+  '@context': {
+    '@vocab': 'http://example.org/'
+  },
+  '@id': 'http://example.org/library',
+  '@type': 'Library',
+  'contains': {
+    '@id': 'http://example.org/library/the-republic',
+    '@type': 'Book',
+    'contains': {
       '@id': 'http://example.org/library/the-republic#introduction',
       '@type': 'Chapter',
       'description': 'An introductory chapter on The Republic.',
       'title': 'The Introduction'
-    }]
-  };
-
-  const framedObject = {
-    '@context': {
-      '@vocab': 'http://example.org/'
     },
-    '@id': 'http://example.org/library',
-    '@type': 'Library',
+    'creator': 'Plato',
+    'title': 'The Republic'
+  }
+};
+
+const examplePatch = [
+  {op: 'add', path: '/email', value: 'library@example.com'},
+  {op: 'replace', path: '/contains/title', 'value': 'The Trial and Death of Socrates'},
+  {op: 'remove', path: '/contains/contains/description'}
+];
+
+const expectedPatchedDocument = {
+  '@context': {
+    '@vocab': 'http://example.org/'
+  },
+  '@id': 'http://example.org/library',
+  '@type': 'Library',
+  'email': 'library@example.com',
+  'contains': {
+    '@id': 'http://example.org/library/the-republic',
+    '@type': 'Book',
     'contains': {
-      '@id': 'http://example.org/library/the-republic',
-      '@type': 'Book',
-      'contains': {
-        '@id': 'http://example.org/library/the-republic#introduction',
-        '@type': 'Chapter',
-        'description': 'An introductory chapter on The Republic.',
-        'title': 'The Introduction'
-      },
-      'creator': 'Plato',
-      'title': 'The Republic'
-    }
-  };
-
-  const examplePatch = [
-    {op: 'add', path: '/email', value: 'library@example.com'},
-    {op: 'replace', path: '/contains/title', 'value': 'The Trial and Death of Socrates'},
-    {op: 'remove', path: '/contains/contains/description'}
-  ];
-
-  const expectedPatchedDocument = {
-    '@context': {
-      '@vocab': 'http://example.org/'
+      '@id': 'http://example.org/library/the-republic#introduction',
+      '@type': 'Chapter',
+      'title': 'The Introduction'
     },
-    '@id': 'http://example.org/library',
-    '@type': 'Library',
-    'email': 'library@example.com',
-    'contains': {
-      '@id': 'http://example.org/library/the-republic',
-      '@type': 'Book',
-      'contains': {
-        '@id': 'http://example.org/library/the-republic#introduction',
-        '@type': 'Chapter',
-        'title': 'The Introduction'
-      },
-      'creator': 'Plato',
-      'title': 'The Trial and Death of Socrates'
-    }
-  };
+    'creator': 'Plato',
+    'title': 'The Trial and Death of Socrates'
+  }
+};
 
+describe('applyPatch', function() {
   it('should properly patch with just the patch, no frame', function (done) {
     jldp.applyPatch(
       {document: framedObject,
