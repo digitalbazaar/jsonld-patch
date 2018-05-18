@@ -216,3 +216,23 @@ describe('applyPatch', function() {
   });
 });
 
+// FIXME: We shouldn't be relying on a particular patch order.
+const expectedPatch = [
+  {op: 'replace',
+   path: '/contains/title',
+   value: 'The Trial and Death of Socrates' },
+  {op: 'remove', path: '/contains/contains/description' },
+  {op: 'add', path: '/email', value: 'library@example.com' }]
+
+describe('diff', function() {
+  it('generates a diff correctly', function(done) {
+    jldp.diff(
+      flatObject, expectedPatchedDocument,
+      {frame: exampleFrame}).then(
+        (diff) => {
+          assert.deepEqual(diff, expectedPatch);
+          done();
+        }).catch(done);
+  });
+});
+
